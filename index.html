@@ -5,18 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Workout Tracker</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <!-- Firebase Authentication -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
 </head>
 <body>
     <h1>Customer Workout Tracker</h1>
     <div id="auth">
-        <input type="email" id="email" placeholder="Email">
+        <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="loginButton">Login</button>
-        <button id="signUpButton">Sign Up</button>
         <button id="logoutButton" style="display:none;">Logout</button>
     </div>
     <form id="addCustomerForm" style="display:none;">
@@ -41,7 +36,6 @@
             <!-- Existing customers will be listed here -->
         </tbody>
     </table>
-    <!-- Ensure your custom script is loaded after Firebase scripts -->
     <script src="scripts.js"></script>
 </body>
 </html>
