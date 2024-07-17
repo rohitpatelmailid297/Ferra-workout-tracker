@@ -1,12 +1,13 @@
 // scripts.js
 // Your web app's Firebase configuration
 var firebaseConfig = {
-    apiKey: "AIzaSyD_XqqF2U5QEMvosKWE5e-3PCWxqxySZjQ",
-    authDomain: "ferra-daily-workout-tracker.firebaseapp.com",
-    projectId: "ferra-daily-workout-tracker",
-    storageBucket: "ferra-daily-workout-tracker.appspot.com",
-    messagingSenderId: "831602521177",
-    appId: "1:831602521177:web:6f429006494c96f396ad48"
+  apiKey: "AIzaSyD_XqqF2U5QEMvosKWE5e-3PCWxqxySZjQ",
+  authDomain: "ferra-daily-workout-tracker.firebaseapp.com",
+  projectId: "ferra-daily-workout-tracker",
+  storageBucket: "ferra-daily-workout-tracker.appspot.com",
+  messagingSenderId: "831602521177",
+  appId: "1:831602521177:web:6f429006494c96f396ad48",
+  measurementId: "G-12HQWK4GST"
 };
 
 // Initialize Firebase
