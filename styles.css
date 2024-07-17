@@ -57,7 +57,3 @@ th {
 .editable {
     cursor: pointer;
 }
-
-.edit-button, .status {
-    display: none;
-}
