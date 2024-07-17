@@ -1,19 +1,14 @@
-// scripts.js
+// Replace with your GitHub repository details
+const GITHUB_OWNER = 'rohitpatelmailid297';
+const GITHUB_REPO = 'Ferra-workout-tracker.github.io';
+const GITHUB_FILE_PATH = 'data.json';
+const GITHUB_TOKEN = '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'; // Replace with your personal access token
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addCustomerForm').addEventListener('submit', addCustomer);
     document.getElementById('addDayButton').addEventListener('click', addNewDay);
-    
-    // Load customer data from localStorage
-    loadCustomerData();
 
-    // Initialize statuses based on their text content
-    document.querySelectorAll('.status').forEach(cell => {
-        if (cell.textContent.trim().toLowerCase() === 'green') {
-            cell.classList.add('green');
-        } else {
-            cell.classList.add('red');
-        }
-    });
+    loadCustomerData();
 });
 
 function toggleStatus(element) {
@@ -31,16 +26,16 @@ function toggleStatus(element) {
 
 function addCustomer(event) {
     event.preventDefault();
-    
+
     const customerName = document.getElementById('customerName').value.trim();
     if (!customerName) {
         alert('Please enter a valid customer name.');
         return;
     }
-    
+
     const customerTable = document.getElementById('customerTable');
     const newRow = document.createElement('tr');
-    
+
     const nameCell = document.createElement('td');
     const nameSpan = document.createElement('span');
     nameSpan.textContent = customerName;
@@ -52,7 +47,7 @@ function addCustomer(event) {
     nameCell.appendChild(nameSpan);
     nameCell.appendChild(editButton);
     newRow.appendChild(nameCell);
-    
+
     for (let i = 0; i < 7; i++) {
         const statusCell = document.createElement('td');
         statusCell.textContent = 'Red';
@@ -60,7 +55,7 @@ function addCustomer(event) {
         statusCell.onclick = () => toggleStatus(statusCell);
         newRow.appendChild(statusCell);
     }
-    
+
     customerTable.appendChild(newRow);
     document.getElementById('customerName').value = '';
     saveCustomerData();
@@ -69,13 +64,13 @@ function addCustomer(event) {
 function addNewDay() {
     const table = document.querySelector('table thead tr');
     const customerRows = document.querySelectorAll('#customerTable tr');
-    
+
     // Add a new day header
     const newDayIndex = table.children.length;
     const newDayHeader = document.createElement('th');
     newDayHeader.textContent = `Day ${newDayIndex}`;
     table.appendChild(newDayHeader);
-    
+
     // Add a new day cell to each customer row
     customerRows.forEach(row => {
         const newDayCell = document.createElement('td');
@@ -83,13 +78,13 @@ function addNewDay() {
         newDayCell.classList.add('status', 'red');
         newDayCell.onclick = () => toggleStatus(newDayCell);
         row.appendChild(newDayCell);
-        
+
         // Remove the first day cell to keep the last 7 days
         if (row.children.length > 8) {
             row.removeChild(row.children[1]);
         }
     });
-    
+
     // Remove the first day header to keep the last 7 days
     if (table.children.length > 8) {
         table.removeChild(table.children[1]);
@@ -105,10 +100,10 @@ function editCustomerName(nameSpan) {
     }
 }
 
-function saveCustomerData() {
+async function saveCustomerData() {
     const customerTable = document.getElementById('customerTable');
     const customers = [];
-    
+
     customerTable.querySelectorAll('tr').forEach(row => {
         const customer = {
             name: row.querySelector('.customer-name').textContent,
@@ -119,18 +114,21 @@ function saveCustomerData() {
         });
         customers.push(customer);
     });
-    
-    localStorage.setItem('customers', JSON.stringify(customers));
+
+    const jsonData = JSON.stringify(customers);
+    await uploadFileToGitHub(GITHUB_OWNER, GITHUB_REPO, GITHUB_FILE_PATH, jsonData, GITHUB_TOKEN);
 }
 
-function loadCustomerData() {
+async function loadCustomerData() {
+    const jsonData = await fetchFileFromGitHub(GITHUB_OWNER, GITHUB_REPO, GITHUB_FILE_PATH, GITHUB_TOKEN);
+    const customers = JSON.parse(jsonData);
+    
     const customerTable = document.getElementById('customerTable');
     customerTable.innerHTML = '';
-    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-    
+
     customers.forEach(customer => {
         const newRow = document.createElement('tr');
-        
+
         const nameCell = document.createElement('td');
         const nameSpan = document.createElement('span');
         nameSpan.textContent = customer.name;
@@ -142,7 +140,7 @@ function loadCustomerData() {
         nameCell.appendChild(nameSpan);
         nameCell.appendChild(editButton);
         newRow.appendChild(nameCell);
-        
+
         customer.days.forEach(day => {
             const statusCell = document.createElement('td');
             statusCell.textContent = day === 'green' ? 'Green' : 'Red';
@@ -150,7 +148,56 @@ function loadCustomerData() {
             statusCell.onclick = () => toggleStatus(statusCell);
             newRow.appendChild(statusCell);
         });
-        
+
         customerTable.appendChild(newRow);
     });
+}
+
+async function fetchFileFromGitHub(owner, repo, path, token) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3.raw'
+        }
+    });
+    if (!response.ok) {
+        throw new Error(`Could not fetch file: ${response.statusText}`);
+    }
+    return await response.text();
+}
+
+async function uploadFileToGitHub(owner, repo, path, content, token) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: 'Update customer data',
+            content: btoa(content),
+            sha: await getFileSha(owner, repo, path, token)
+        })
+    });
+    if (!response.ok) {
+        throw new Error(`Could not upload file: ${response.statusText}`);
+    }
+}
+
+async function getFileSha(owner, repo, path, token) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+    if (!response.ok) {
+        throw new Error(`Could not get file SHA: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.sha;
 }
