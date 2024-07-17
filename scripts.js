@@ -8,6 +8,7 @@ var firebaseConfig = {
     messagingSenderId: "831602521177",
     appId: "1:831602521177:web:6f429006494c96f396ad48"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
@@ -15,6 +16,7 @@ const auth = firebase.auth();
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loginButton').addEventListener('click', login);
+    document.getElementById('signUpButton').addEventListener('click', signUp);
     document.getElementById('logoutButton').addEventListener('click', logout);
     document.getElementById('addCustomerForm').addEventListener('submit', addCustomer);
     document.getElementById('addDayButton').addEventListener('click', addNewDay);
@@ -27,15 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('addCustomerForm').style.display = 'block';
             document.getElementById('addDayButton').style.display = 'block';
             document.getElementById('logoutButton').style.display = 'block';
-            loadCustomerData();
+            enableEditing(true);
         } else {
             // No user is signed in
             document.getElementById('auth').style.display = 'block';
             document.getElementById('addCustomerForm').style.display = 'none';
             document.getElementById('addDayButton').style.display = 'none';
             document.getElementById('logoutButton').style.display = 'none';
-            loadCustomerData(); // Load data but keep edit options hidden
+            enableEditing(false);
         }
+        loadCustomerData();
     });
 });
 
@@ -48,6 +51,18 @@ function login() {
         })
         .catch(error => {
             console.error('Error logging in:', error);
+        });
+}
+
+function signUp() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            console.log('User signed up');
+        })
+        .catch(error => {
+            console.error('Error signing up:', error);
         });
 }
 
@@ -208,14 +223,20 @@ function loadCustomerData() {
         customerTable.appendChild(newRow);
     });
 
-    const user = auth.currentUser;
-    if (user) {
-        document.querySelectorAll('.edit-button, .status').forEach(element => {
-            element.style.display = 'inline-block';
-        });
-    } else {
-        document.querySelectorAll('.edit-button, .status').forEach(element => {
-            element.style.display = 'none';
-        });
-    }
+    enableEditing(auth.currentUser !== null);
+}
+
+function enableEditing(isEnabled) {
+    document.querySelectorAll('.edit-button').forEach(button => {
+        button.style.display = isEnabled ? 'inline-block' : 'none';
+    });
+    document.querySelectorAll('.status').forEach(cell => {
+        if (isEnabled) {
+            cell.onclick = () => toggleStatus(cell);
+            cell.classList.add('editable');
+        } else {
+            cell.onclick = null;
+            cell.classList.remove('editable');
+        }
+    });
 }
