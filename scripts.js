@@ -1,83 +1,55 @@
 // scripts.js
-// Your web app's Firebase configuration
-var firebaseConfig = {
-  apiKey: "AIzaSyD_XqqF2U5QEMvosKWE5e-3PCWxqxySZjQ",
-  authDomain: "ferra-daily-workout-tracker.firebaseapp.com",
-  projectId: "ferra-daily-workout-tracker",
-  storageBucket: "ferra-daily-workout-tracker.appspot.com",
-  messagingSenderId: "831602521177",
-  appId: "1:831602521177:web:6f429006494c96f396ad48",
-  measurementId: "G-12HQWK4GST"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loginButton').addEventListener('click', login);
-    document.getElementById('signUpButton').addEventListener('click', signUp);
     document.getElementById('logoutButton').addEventListener('click', logout);
     document.getElementById('addCustomerForm').addEventListener('submit', addCustomer);
     document.getElementById('addDayButton').addEventListener('click', addNewDay);
 
-    // Check authentication state
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            // User is signed in
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('addCustomerForm').style.display = 'block';
-            document.getElementById('addDayButton').style.display = 'block';
-            document.getElementById('logoutButton').style.display = 'block';
-            enableEditing(true);
-        } else {
-            // No user is signed in
-            document.getElementById('auth').style.display = 'block';
-            document.getElementById('addCustomerForm').style.display = 'none';
-            document.getElementById('addDayButton').style.display = 'none';
-            document.getElementById('logoutButton').style.display = 'none';
-            enableEditing(false);
-        }
-        loadCustomerData();
-    });
+    // Check login state on page load
+    checkLoginState();
 });
 
-function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            console.log('User logged in');
-        })
-        .catch(error => {
-            console.error('Error logging in:', error);
-        });
-}
+const USERNAME = 'Rohit';
+const PASSWORD = 'Patel';
 
-function signUp() {
-    const email = document.getElementById('email').value;
+function login() {
+    const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            console.log('User signed up');
-        })
-        .catch(error => {
-            console.error('Error signing up:', error);
-        });
+    if (username === USERNAME && password === PASSWORD) {
+        localStorage.setItem('isLoggedIn', 'true');
+        checkLoginState();
+    } else {
+        alert('Invalid credentials');
+    }
 }
 
 function logout() {
-    auth.signOut().then(() => {
-        console.log('User logged out');
-    }).catch(error => {
-        console.error('Error logging out:', error);
-    });
+    localStorage.removeItem('isLoggedIn');
+    checkLoginState();
+}
+
+function checkLoginState() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+        document.getElementById('auth').style.display = 'none';
+        document.getElementById('addCustomerForm').style.display = 'block';
+        document.getElementById('addDayButton').style.display = 'block';
+        document.getElementById('logoutButton').style.display = 'block';
+        loadCustomerData();
+        enableEditing(true);
+    } else {
+        document.getElementById('auth').style.display = 'block';
+        document.getElementById('addCustomerForm').style.display = 'none';
+        document.getElementById('addDayButton').style.display = 'none';
+        document.getElementById('logoutButton').style.display = 'none';
+        loadCustomerData();
+        enableEditing(false);
+    }
 }
 
 function toggleStatus(element) {
-    const user = auth.currentUser;
-    if (user) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
         if (element.classList.contains('green')) {
             element.classList.remove('green');
             element.classList.add('red');
@@ -93,8 +65,8 @@ function toggleStatus(element) {
 
 function addCustomer(event) {
     event.preventDefault();
-    const user = auth.currentUser;
-    if (user) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
         const customerName = document.getElementById('customerName').value.trim();
         if (!customerName) {
             alert('Please enter a valid customer name.');
@@ -131,8 +103,8 @@ function addCustomer(event) {
 }
 
 function addNewDay() {
-    const user = auth.currentUser;
-    if (user) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
         const table = document.querySelector('table thead tr');
         const customerRows = document.querySelectorAll('#customerTable tr');
 
@@ -165,8 +137,8 @@ function addNewDay() {
 }
 
 function editCustomerName(nameSpan) {
-    const user = auth.currentUser;
-    if (user) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
         const newName = prompt('Enter new name:', nameSpan.textContent);
         if (newName && newName.trim()) {
             nameSpan.textContent = newName.trim();
@@ -224,7 +196,7 @@ function loadCustomerData() {
         customerTable.appendChild(newRow);
     });
 
-    enableEditing(auth.currentUser !== null);
+    enableEditing(localStorage.getItem('isLoggedIn') === 'true');
 }
 
 function enableEditing(isEnabled) {
