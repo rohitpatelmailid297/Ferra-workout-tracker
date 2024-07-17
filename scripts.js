@@ -152,7 +152,7 @@ function saveCustomerData() {
             days: []
         };
         row.querySelectorAll('.status').forEach(cell => {
-            customer.days.push(cell.textContent.trim().toLowerCase());
+            customer.days.push(cell.classList.contains('green') ? 'green' : 'red');
         });
         customers.push(customer);
     });
@@ -183,7 +183,7 @@ function loadCustomerData() {
         customer.days.forEach(day => {
             const statusCell = document.createElement('td');
             statusCell.textContent = day === 'green' ? 'Green' : 'Red';
-            statusCell.classList.add('status', day === 'green' ? 'green' : 'red');
+            statusCell.classList.add('status', day);
             statusCell.onclick = () => toggleStatus(statusCell);
             newRow.appendChild(statusCell);
         });
