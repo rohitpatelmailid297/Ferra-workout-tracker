@@ -1,0 +1,55 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+form {
+    margin: 20px auto;
+}
+
+input[type="text"] {
+    padding: 8px;
+    margin-right: 10px;
+    width: 200px;
+}
+
+button {
+    padding: 8px 16px;
+    margin: 10px;
+}
+
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.status {
+    cursor: pointer;
+}
+
+.status.green {
+    background-color: green;
+    color: white;
+}
+
+.status.red {
+    background-color: red;
+    color: white;
+}
+
+.edit-button {
+    margin-left: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
+}

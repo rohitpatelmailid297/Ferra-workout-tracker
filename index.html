@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Workout Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Customer Workout Tracker</h1>
+    
+    <form id="addCustomerForm">
+        <input type="text" id="customerName" placeholder="Enter Customer Name" required>
+        <button type="submit">Add Customer</button>
+    </form>
+    
+    <button id="addDayButton">Add New Day</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Day 1</th>
+                <th>Day 2</th>
+                <th>Day 3</th>
+                <th>Day 4</th>
+                <th>Day 5</th>
+                <th>Day 6</th>
+                <th>Day 7</th>
+            </tr>
+        </thead>
+        <tbody id="customerTable">
+            <!-- Existing customers will be listed here -->
+        </tbody>
+    </table>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>
