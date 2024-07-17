@@ -1,144 +1,96 @@
 // scripts.js
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('loginButton').addEventListener('click', login);
-    document.getElementById('logoutButton').addEventListener('click', logout);
     document.getElementById('addCustomerForm').addEventListener('submit', addCustomer);
     document.getElementById('addDayButton').addEventListener('click', addNewDay);
 
-    // Check login state on page load
-    checkLoginState();
+    loadCustomerData();
 });
 
-const USERNAME = 'Rohit';
-const PASSWORD = 'Patel';
-
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    if (username === USERNAME && password === PASSWORD) {
-        localStorage.setItem('isLoggedIn', 'true');
-        checkLoginState();
-    } else {
-        alert('Invalid credentials');
-    }
-}
-
-function logout() {
-    localStorage.removeItem('isLoggedIn');
-    checkLoginState();
-}
-
-function checkLoginState() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
-        document.getElementById('auth').style.display = 'none';
-        document.getElementById('addCustomerForm').style.display = 'block';
-        document.getElementById('addDayButton').style.display = 'block';
-        document.getElementById('logoutButton').style.display = 'block';
-        enableEditing(true);
-    } else {
-        document.getElementById('auth').style.display = 'block';
-        document.getElementById('addCustomerForm').style.display = 'none';
-        document.getElementById('addDayButton').style.display = 'none';
-        document.getElementById('logoutButton').style.display = 'none';
-        enableEditing(false);
-    }
-    loadCustomerData();
-}
-
 function toggleStatus(element) {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        if (element.classList.contains('green')) {
-            element.classList.remove('green');
-            element.classList.add('red');
-            element.textContent = 'Red';
-        } else {
-            element.classList.remove('red');
-            element.classList.add('green');
-            element.textContent = 'Green';
-        }
-        saveCustomerData();
+    if (element.classList.contains('green')) {
+        element.classList.remove('green');
+        element.classList.add('red');
+        element.textContent = 'Red';
+    } else {
+        element.classList.remove('red');
+        element.classList.add('green');
+        element.textContent = 'Green';
     }
+    saveCustomerData();
 }
 
 function addCustomer(event) {
     event.preventDefault();
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        const customerName = document.getElementById('customerName').value.trim();
-        if (!customerName) {
-            alert('Please enter a valid customer name.');
-            return;
-        }
-
-        const customerTable = document.getElementById('customerTable');
-        const newRow = document.createElement('tr');
-
-        const nameCell = document.createElement('td');
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = customerName;
-        nameSpan.classList.add('customer-name');
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('edit-button');
-        editButton.onclick = () => editCustomerName(nameSpan);
-        nameCell.appendChild(nameSpan);
-        nameCell.appendChild(editButton);
-        newRow.appendChild(nameCell);
-
-        for (let i = 0; i < 7; i++) {
-            const statusCell = document.createElement('td');
-            statusCell.textContent = 'Red';
-            statusCell.classList.add('status', 'red');
-            statusCell.onclick = () => toggleStatus(statusCell);
-            newRow.appendChild(statusCell);
-        }
-
-        customerTable.appendChild(newRow);
-        document.getElementById('customerName').value = '';
-        saveCustomerData();
+    const customerName = document.getElementById('customerName').value.trim();
+    if (!customerName) {
+        alert('Please enter a valid customer name.');
+        return;
     }
+
+    const customerTable = document.getElementById('customerTable');
+    const newRow = document.createElement('tr');
+
+    const nameCell = document.createElement('td');
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = customerName;
+    nameSpan.classList.add('customer-name');
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.classList.add('edit-button');
+    editButton.onclick = () => editCustomerName(nameSpan);
+    nameCell.appendChild(nameSpan);
+    nameCell.appendChild(editButton);
+    newRow.appendChild(nameCell);
+
+    for (let i = 0; i < 7; i++) {
+        const statusCell = document.createElement('td');
+        statusCell.textContent = 'Red';
+        statusCell.classList.add('status', 'red');
+        statusCell.onclick = () => toggleStatus(statusCell);
+        newRow.appendChild(statusCell);
+    }
+
+    customerTable.appendChild(newRow);
+    document.getElementById('customerName').value = '';
+    saveCustomerData();
 }
 
 function addNewDay() {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        const table = document.querySelector('table thead tr');
-        const customerRows = document.querySelectorAll('#customerTable tr');
+    const table = document.querySelector('table thead tr');
+    const customerRows = document.querySelectorAll('#customerTable tr');
 
-        // Add a new day header
-        const newDayIndex = table.children.length;
-        const newDayHeader = document.createElement('th');
-        newDayHeader.textContent = `Day ${newDayIndex}`;
-        table.appendChild(newDayHeader);
+    // Add a new day header
+    const newDayIndex = table.children.length;
+    const newDayHeader = document.createElement('th');
+    newDayHeader.textContent = `Day ${newDayIndex}`;
+    table.appendChild(newDayHeader);
 
-        // Add a new day cell to each customer row
-        customerRows.forEach(row => {
-            const newDayCell = document.createElement('td');
-            newDayCell.textContent = 'Red';
-            newDayCell.classList.add('status', 'red');
-            newDayCell.onclick = () => toggleStatus(newDayCell);
-            row.appendChild(newDayCell);
+    // Add a new day cell to each customer row
+    customerRows.forEach(row => {
+        const newDayCell = document.createElement('td');
+        newDayCell.textContent = 'Red';
+        newDayCell.classList.add('status', 'red');
+        newDayCell.onclick = () => toggleStatus(newDayCell);
+        row.appendChild(newDayCell);
 
-            // Remove the first day cell to keep the last 7 days
-            if (row.children.length > 8) {
-                row.removeChild(row.children[1]);
-            }
-        });
-
-        // Remove the first day header to keep the last 7 days
-        if (table.children.length > 8) {
-            table.removeChild(table.children[1]);
+        // Remove the first day cell to keep the last 7 days
+        if (row.children.length > 8) {
+            row.removeChild(row.children[1]);
         }
-        saveCustomerData();
+    });
+
+    // Remove the first day header to keep the last 7 days
+    if (table.children.length > 8) {
+        table.removeChild(table.children[1]);
     }
+    saveCustomerData();
 }
 
 function editCustomerName(nameSpan) {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        const newName = prompt('Enter new name:', nameSpan.textContent);
-        if (newName && newName.trim()) {
-            nameSpan.textContent = newName.trim();
-            saveCustomerData();
-        }
+    const newName = prompt('Enter new name:', nameSpan.textContent);
+    if (newName && newName.trim()) {
+        nameSpan.textContent = newName.trim();
+        saveCustomerData();
     }
 }
 
@@ -189,22 +141,5 @@ function loadCustomerData() {
         });
 
         customerTable.appendChild(newRow);
-    });
-
-    enableEditing(localStorage.getItem('isLoggedIn') === 'true');
-}
-
-function enableEditing(isEnabled) {
-    document.querySelectorAll('.edit-button').forEach(button => {
-        button.style.display = isEnabled ? 'inline-block' : 'none';
-    });
-    document.querySelectorAll('.status').forEach(cell => {
-        if (isEnabled) {
-            cell.onclick = () => toggleStatus(cell);
-            cell.classList.add('editable');
-        } else {
-            cell.onclick = null;
-            cell.classList.remove('editable');
-        }
     });
 }
