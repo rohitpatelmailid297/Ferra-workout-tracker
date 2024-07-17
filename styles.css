@@ -1,55 +1,42 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-form {
+h1 {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px 0;
+    margin: 0;
+    box-shadow: 0 4px 8px -2px gray;
+}
+
+#table-container {
     margin: 20px auto;
-}
-
-input[type="text"] {
-    padding: 8px;
-    margin-right: 10px;
-    width: 200px;
-}
-
-button {
-    padding: 8px 16px;
-    margin: 10px;
+    width: 80%;
+    overflow-x: auto;
 }
 
 table {
-    margin: 20px auto;
+    width: 100%;
     border-collapse: collapse;
-    width: 80%;
+    margin: 20px 0;
 }
 
 th, td {
+    padding: 12px;
     border: 1px solid #ddd;
-    padding: 8px;
+    text-align: left;
 }
 
 th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
     background-color: #f2f2f2;
-}
-
-.status {
-    cursor: pointer;
-}
-
-.status.green {
-    background-color: green;
-    color: white;
-}
-
-.status.red {
-    background-color: red;
-    color: white;
-}
-
-.edit-button {
-    margin-left: 10px;
-    padding: 2px 5px;
-    cursor: pointer;
 }
