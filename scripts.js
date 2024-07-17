@@ -35,21 +35,19 @@ function checkLoginState() {
         document.getElementById('addCustomerForm').style.display = 'block';
         document.getElementById('addDayButton').style.display = 'block';
         document.getElementById('logoutButton').style.display = 'block';
-        loadCustomerData();
         enableEditing(true);
     } else {
         document.getElementById('auth').style.display = 'block';
         document.getElementById('addCustomerForm').style.display = 'none';
         document.getElementById('addDayButton').style.display = 'none';
         document.getElementById('logoutButton').style.display = 'none';
-        loadCustomerData();
         enableEditing(false);
     }
+    loadCustomerData();
 }
 
 function toggleStatus(element) {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
         if (element.classList.contains('green')) {
             element.classList.remove('green');
             element.classList.add('red');
@@ -65,8 +63,7 @@ function toggleStatus(element) {
 
 function addCustomer(event) {
     event.preventDefault();
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
         const customerName = document.getElementById('customerName').value.trim();
         if (!customerName) {
             alert('Please enter a valid customer name.');
@@ -103,8 +100,7 @@ function addCustomer(event) {
 }
 
 function addNewDay() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
         const table = document.querySelector('table thead tr');
         const customerRows = document.querySelectorAll('#customerTable tr');
 
@@ -137,8 +133,7 @@ function addNewDay() {
 }
 
 function editCustomerName(nameSpan) {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
         const newName = prompt('Enter new name:', nameSpan.textContent);
         if (newName && newName.trim()) {
             nameSpan.textContent = newName.trim();
